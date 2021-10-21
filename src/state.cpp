@@ -46,3 +46,13 @@ void State::addTransition(Transition newTrans) {
 void State::toggleAcceptance() {
   acceptance = !acceptance;
 }
+
+vector<Transition> State::possibleTransitions(string charBelt, string charStack) {
+  vector<Transition> finalTrans;
+  for (auto tr: transitions) {
+    if ((charBelt == tr.getCharBelt() && charStack == tr.getCharStack()) ||
+    tr.getCharBelt() == "." && charStack == tr.getCharStack()) 
+      finalTrans.push_back(tr);
+  }
+  return finalTrans;
+}

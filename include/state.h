@@ -22,5 +22,6 @@ class State {
     vector<Transition> getTransitions();
     void addTransition(Transition);
     void toggleAcceptance();
+    vector<Transition> possibleTransitions(string, string);
 
 };

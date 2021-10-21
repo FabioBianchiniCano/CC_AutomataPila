@@ -27,7 +27,7 @@ Graph::Graph(InfoAutomaton infoAut) {
   for (auto state: states) 
     if (infoAut.initialState == state.getName())
       initialState = state;
-
+  currentState = initialState;
 }
 
 Graph::Graph(vector<State> S, vector<string> ASN, vector<string> AB, vector<string> AS, stack<string> GS, Belt CB) {
@@ -64,41 +64,61 @@ void Graph::setConveyorBelt(Belt cb) {
   conveyorBelt = cb;
 }
 
-void Graph:: doTransition(Transition tr) {
-  if (tr.getCharBelt() != ".") conveyorBelt.nextChar();
-  graphStack.pop();
+State Graph::getStateByID(string id) {
+  for(auto state: states)
+    if (state.getName() == id)
+      return state;
+}
+
+bool Graph::checkInAlphabet(string charToCheck, vector<string> alphabet) {
+  if (charToCheck == ".") return true;
+  for (auto str: alphabet) if (str == charToCheck) return true;
+  cout << "String not member of alphabet!" << endl;
+  return false;
+}
+
+void Graph::doTransition(Transition tr, Belt& currentBelt, stack<string>& currentStack) {
+  currentStack.pop();
+  if (tr.getCharBelt() != ".") currentBelt.nextChar();
   if (tr.getInsertCharsStack()[0] != ".")
     for (int i = tr.getInsertCharsStack().size()-1; i >= 0; i--)
-      graphStack.push(tr.getInsertCharsStack()[i]);
-  for (auto state: states)
-    if (state.getName() == tr.getIdStateTo())
-      currentState = state;
-  
+      currentStack.push(tr.getInsertCharsStack()[i]);
 }
 
-bool Graph::algorithm() {
-  currentState = initialState;
-  while ((conveyorBelt.getPointer() < conveyorBelt.getBelt().size()) && 
-        !graphStack.empty()) {
-    for (auto tr: currentState.getTransitions()) {
-      if (conveyorBelt.getCurrent() == tr.getCharBelt() && 
-      graphStack.top() == tr.getCharStack()) {
-        doTransition(tr);
-        writeTransition(tr);
-      }
-    }
+bool Graph::algorithm(Belt currentBelt, stack<string> currentStack, State newCS, bool writeMode) {
+  if (!checkInAlphabet(currentBelt.getCurrent(), alphabetBelt)) return false;
+  if (!checkInAlphabet(currentStack.top(), alphabetStack)) return false;
 
+  vector<Transition> posTrans(newCS.possibleTransitions(currentBelt.getCurrent(), currentStack.top()));
+  for (auto tr: posTrans) {
+    Belt auxBelt = currentBelt;
+    stack<string> auxStack = currentStack;
+    doTransition(tr, auxBelt, auxStack);
+
+    if (writeMode) writeTransition(tr, currentBelt, currentStack, newCS);
+    if (algorithm(auxBelt, auxStack, getStateByID(tr.getIdStateTo()), writeMode))
+      return true;
   }
-  cout << endl;
-  return currentState.isAcceptance() ? true : false;
+
+  if (currentStack.empty() || currentBelt.getPointer() >= currentBelt.getBelt().size()) {
+    return newCS.isAcceptance() ? true : false;
+  }
+  return false;
 }
 
-/* a escribir */
-void Graph::writeTransition(Transition tr) {
-  cout << "Estado: " << currentState.getName() << endl;
-  cout << "Transición: " << tr;
+void Graph::writeTransition(Transition tr, Belt currentBelt, stack<string> currentStack, State newCS) {
   cout << "-----------------------\nDescripción instantánea:" << endl;
-  cout << "Cinta: " << conveyorBelt.getRemainer() << endl;
-  cout << "Pila: " << "mirmanaso" << endl;
-  cout << endl;
+  cout << "Cinta: " << currentBelt.getRemainer() << endl;
+  cout << "Pila: " << stackToString(currentStack) << endl;
+  cout << "Estado actual: " << newCS.getName() << endl;
+  cout << "Transición a realizar: " << tr;
+}
+
+string Graph::stackToString(stack<string> stack) {
+  string output;
+  while (!stack.empty()) {
+    output += stack.top();
+    stack.pop();
+  }
+  return output;
 }

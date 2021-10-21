@@ -3,17 +3,18 @@ _OBJ = ../obj/
 _SRC = ../src/
 
 CC = g++
-CFLAGS = -Wsign-compare -Wall -g -c -I$(_INC)
+CFLAGS = -Wall -g -c -I$(_INC)
 OBJ = belt.o state.o transition.o graph.o main.o
 BINARY = automata
 
 
 OBJFULL = $(patsubst %,$(_OBJ)%,$(OBJ))
 
-all: $(BINARY) execute
+all: $(BINARY)
 
 $(BINARY): $(OBJ)
-	$(CC) -o $(BINARY) $(OBJFULL)
+	$(CC) -Wsign-compare -o $(BINARY) $(OBJFULL)
+	@clear
 
 
 # $@ main.o
@@ -22,10 +23,9 @@ $(BINARY): $(OBJ)
 	$(CC) $(CFLAGS) $< -o $(_OBJ)$@
 
 
-execute:
-	@clear
-	@echo "Ejecutando el programa...\n-----------------------------"
-	@./$(BINARY)
+# execute:
+# 	@echo "Ejecutando el programa...\n-----------------------------"
+# 	@./$(BINARY)
 
 
 .PHONY: clean # Por si alguna vez existe un fichero clean en esta carpeta

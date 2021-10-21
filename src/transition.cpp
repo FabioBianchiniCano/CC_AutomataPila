@@ -31,7 +31,7 @@ void Transition::operator=(Transition newTrans) {
 }
 
 ostream& operator<<(ostream& os, const Transition& tr) {
-  os << "Transition: " << tr.charBelt << " " << tr.charStack << " " << tr.idStateTo << " ";
+  os << tr.charBelt << " " << tr.charStack << " " << tr.idStateTo << " ";
   for (auto CS: tr.insertCharsStack) os << CS << " ";
   os << endl;
   return os;

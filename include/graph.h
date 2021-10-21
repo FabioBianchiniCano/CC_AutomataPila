@@ -31,7 +31,10 @@ class Graph {
     stack<string> getGraphStack();
     Belt getConveyorBelt();
     void setConveyorBelt(Belt);
-    void doTransition(Transition);
-    bool algorithm();
-    void writeTransition(Transition);
+    State getStateByID(string);
+    bool checkInAlphabet(string, vector<string>);
+    void doTransition(Transition, Belt&, stack<string>&);
+    bool algorithm(Belt, stack<string>, State, bool);
+    void writeTransition(Transition, Belt , stack<string> , State );
+    string stackToString(stack<string> stack);
 };

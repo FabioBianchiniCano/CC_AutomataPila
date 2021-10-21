@@ -1,4 +1,5 @@
 #include "../include/belt.h"
+#include <typeinfo>
 
 Belt::Belt() {
   belt = "";
@@ -17,7 +18,7 @@ int Belt::getPointer() {
 }
 
 string Belt::getCurrent() {
-  return string{belt[pointer]};
+  return (pointer == belt.size()) ? "." : string{belt[pointer]};
 }
 
 string Belt::getRemainer() {

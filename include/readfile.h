@@ -25,6 +25,10 @@ InfoAutomaton readFile(string filename) {
   InfoAutomaton infoFile;
   string line;
   ifstream file("../lib/" + filename + ".txt");
+  if (file.fail()) {
+    cout << "File not found." << endl;
+    exit(1);
+  }
   int i = 0;
 
   while (getline (file, line)) {

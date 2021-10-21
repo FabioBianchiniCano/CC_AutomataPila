@@ -11,11 +11,13 @@ class Transition {
     string charStack;
     vector<string> insertCharsStack;
     string idStateTo;
-    // string idStateFrom;
+    string idStateFrom;
 
   public:
     Transition();
     Transition(string, string, vector<string>, string);
+    void setStateFrom(string stateFrom) {idStateFrom = stateFrom; }
+    string getIdStateFrom() { return idStateFrom; } 
     string getCharBelt(); 
     string getCharStack();
     vector<string> getInsertCharsStack();
